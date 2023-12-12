@@ -5,6 +5,7 @@
   "dependencies": {
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
+    "react-google-maps": "^9.4.5",
     "react-router-dom": "^6.20.1",
     "react-scripts": "3.2.0",
     "react-transition-group": "^4.4.5"
