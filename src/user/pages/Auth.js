@@ -1,6 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import { AuthContext } from "../../shared/context/auth-context";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import useForm from "../../shared/hooks/useForm";
 import Input from "../../shared/components/FormElements/Input";
 import Card from "../../shared/components/UIElements/Card";
@@ -11,17 +13,15 @@ import {
 } from "../../shared/utils/validators";
 import Button from "../../shared/components/FormElements/Button";
 import "./Auth.css";
-import { useContext } from "react";
-function Auth() {
-  const { isLoggedIn, login, logout } = useContext(AuthContext);
 
+function Auth() {
   const [formIsDisabled, setFormIsDisabled] = useState({
     email: true,
     password: true,
     name: true,
   });
   const [isLogin, setIsLogin] = useState(false);
-  const [submitForm, inputHandler] = useForm({
+  const [submitForm, inputHandler, isLoading, error] = useForm({
     setFormIsDisabled,
   });
   function switchModeHandler() {
@@ -30,6 +30,8 @@ function Auth() {
 
   return (
     <Card className="authentication">
+      {isLoading && 
+        <LoadingSpinner asOverlay />}
       <h2>Login Required</h2>
       <form onSubmit={submitForm}>
         {!isLogin && (

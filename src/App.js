@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Route, Routes, Navigate, redirect } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Users from "./user/pages/Users";
 import Auth from "./user/pages/Auth";
 import UserPlaces from "./places/pages/UserPlaces";
@@ -7,6 +7,8 @@ import UpdatePlace from "./places/pages/UpdatePlace";
 import NewPlace from "./places/pages/NewPlace";
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
 import { AuthContext } from "./shared/context/auth-context";
+//mongoose
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
