@@ -1,61 +1,77 @@
-import React, {  useState } from "react";
-import useForm from "../../shared/hooks/useForm";
+import React from "react";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 import Input from "../../shared/components/FormElements/Input";
-import {
-  VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE,
-} from "../../shared/utils/validators";
-import "./PlaceForm.css";
 import Button from "../../shared/components/FormElements/Button";
+import {
+  VALIDATOR_REQUIRE,
+  VALIDATOR_MINLENGTH,
+} from "../../shared/util/validators";
+import { useForm } from "../../shared/hooks/form-hook";
+import "./PlaceForm.css";
 
 const NewPlace = () => {
-  const [formIsDisabled, setFormIsDisabled] = useState({
-    title: true,
-    description: true,
-    adress: true,
-  });
-  const [submitForm, inputHandler] = useForm({
-    formIsDisabled,
-    setFormIsDisabled,
-  });
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [formState, inputHandler] = useForm(
+    {
+      title: {
+        value: "",
+        isValid: false,
+      },
+      description: {
+        value: "",
+        isValid: false,
+      },
+      address: {
+        value: "",
+        isValid: false,
+      },
+    },
+    false
+  );
+
+  const placeSubmitHandler = (event) => {
+    event.preventDefault();
+    sendRequest(
+      "http//loacalhost/api/places",
+      "POST",
+      JSON.stringify({
+        title: formState.inputs.title.value,
+        description: formState.inputs.description.value,
+        address: formState.inputs.address.value,
+        creator: 
+      })
+    );
+  };
+
   return (
-    <form className="place-form" onSubmit={submitForm}>
+    <form className="place-form" onSubmit={placeSubmitHandler}>
       <Input
+        id="title"
         element="input"
         type="text"
         label="Title"
-        id="title"
         validators={[VALIDATOR_REQUIRE()]}
         errorText="Please enter a valid title."
         onInput={inputHandler}
       />
       <Input
-        element="textarea"
-        type="text"
         id="description"
+        element="textarea"
         label="Description"
-        validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
-        errorText="Please enter a valid description."
+        validators={[VALIDATOR_MINLENGTH(5)]}
+        errorText="Please enter a valid description (at least 5 characters)."
         onInput={inputHandler}
       />
       <Input
+        id="address"
         element="input"
-        type="adress"
-        id="adress"
-        label="Adress"
+        label="Address"
         validators={[VALIDATOR_REQUIRE()]}
-        errorText="Please enter a valid adress."
+        errorText="Please enter a valid address."
         onInput={inputHandler}
       />
-      <Button
-        type="submit"
-        disabled={
-          formIsDisabled.title ||
-          formIsDisabled.description ||
-          formIsDisabled.adress
-        }
-      >
-        Add Place
+      <Button type="submit" disabled={!formState.isValid}>
+        ADD PLACE
       </Button>
     </form>
   );
