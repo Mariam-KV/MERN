@@ -1,63 +1,98 @@
-import React, {  useState } from "react";
-import useForm from "../../shared/hooks/useForm";
+import React from "react";
+import { useContext } from "react";
+import { AuthContext } from "../../shared/context/auth-context";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 import Input from "../../shared/components/FormElements/Input";
-import {
-  VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE,
-} from "../../shared/utils/validators";
-import "./PlaceForm.css";
 import Button from "../../shared/components/FormElements/Button";
+import {
+  VALIDATOR_REQUIRE,
+  VALIDATOR_MINLENGTH,
+} from "../../shared/util/validators";
+import { useForm } from "../../shared/hooks/form-hook";
+import "./PlaceForm.css";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import { useNavigate } from "react-router-dom";
 
 const NewPlace = () => {
-  const [formIsDisabled, setFormIsDisabled] = useState({
-    title: true,
-    description: true,
-    adress: true,
-  });
-  const [submitForm, inputHandler] = useForm({
-    formIsDisabled,
-    setFormIsDisabled,
-  });
+  const navigate = useNavigate();
+
+  const { userId } = useContext(AuthContext);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [formState, inputHandler] = useForm(
+    {
+      title: {
+        value: "",
+        isValid: false,
+      },
+      description: {
+        value: "",
+        isValid: false,
+      },
+      address: {
+        value: "",
+        isValid: false,
+      },
+    },
+    false
+  );
+
+  const placeSubmitHandler = async (event) => {
+    event.preventDefault();
+    try {
+      await sendRequest(
+        "http://localhost:5000/api/places",
+        "POST",
+
+        JSON.stringify({
+          title: formState.inputs.title.value,
+          description: formState.inputs.description.value,
+          address: formState.inputs.address.value,
+          creator: userId,
+        }),
+        { "Content-Type": "application/json" }
+      );
+      navigate("/");
+    } catch (err) {}
+  };
+
   return (
-    <form className="place-form" onSubmit={submitForm}>
-      <Input
-        element="input"
-        type="text"
-        label="Title"
-        id="title"
-        validators={[VALIDATOR_REQUIRE()]}
-        errorText="Please enter a valid title."
-        onInput={inputHandler}
-      />
-      <Input
-        element="textarea"
-        type="text"
-        id="description"
-        label="Description"
-        validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
-        errorText="Please enter a valid description."
-        onInput={inputHandler}
-      />
-      <Input
-        element="input"
-        type="adress"
-        id="adress"
-        label="Adress"
-        validators={[VALIDATOR_REQUIRE()]}
-        errorText="Please enter a valid adress."
-        onInput={inputHandler}
-      />
-      <Button
-        type="submit"
-        disabled={
-          formIsDisabled.title ||
-          formIsDisabled.description ||
-          formIsDisabled.adress
-        }
-      >
-        Add Place
-      </Button>
-    </form>
+    <>
+      {isLoading && <LoadingSpinner asOverlay />}
+      {error && <ErrorModal error={error} onClear={clearError} />}
+      {!isLoading && !error && (
+        <form className="place-form" onSubmit={placeSubmitHandler}>
+          <Input
+            id="title"
+            element="input"
+            type="text"
+            label="Title"
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText="Please enter a valid title."
+            onInput={inputHandler}
+          />
+          <Input
+            id="description"
+            element="textarea"
+            label="Description"
+            validators={[VALIDATOR_MINLENGTH(5)]}
+            errorText="Please enter a valid description (at least 5 characters)."
+            onInput={inputHandler}
+          />
+          <Input
+            id="address"
+            element="input"
+            label="Address"
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText="Please enter a valid address."
+            onInput={inputHandler}
+          />
+          <Button type="submit" disabled={!formState.isValid}>
+            ADD PLACE
+          </Button>
+        </form>
+      )}
+    </>
   );
 };
 
