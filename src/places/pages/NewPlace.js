@@ -17,7 +17,7 @@ import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 const NewPlace = () => {
   const navigate = useNavigate();
 
-  const { userId } = useContext(AuthContext);
+  const { userId, token } = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [formState, inputHandler] = useForm(
     {
@@ -48,9 +48,16 @@ const NewPlace = () => {
       formData.append("title", formState.inputs.title.value);
       formData.append("description", formState.inputs.description.value);
       formData.append("address", formState.inputs.address.value);
-      formData.append("creator", userId);
       formData.append("image", formState.inputs.image.value);
-      await sendRequest("http://localhost:5000/api/places", "POST", formData);
+      await sendRequest(
+        "http://localhost:5000/api/places",
+        // behavior for a certain HTTP words.Basically anything but get requests.The browser automatically sends a options request before it sends the actual request you want to send
+        "POST",
+        formData,
+        {
+          Authorization: "Bearer " + token,
+        }
+      );
       navigate("/");
     } catch (err) {
       console.log(err);

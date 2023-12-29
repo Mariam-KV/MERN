@@ -10,7 +10,7 @@ import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { useNavigate } from "react-router-dom";
 const PlaceItem = (props) => {
-  const { isLoggedIn, userId } = useContext(AuthContext);
+  const { isLoggedIn, userId, token } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -36,7 +36,12 @@ const PlaceItem = (props) => {
     try {
       await sendRequest(
         `http://localhost:5000/api/places/${props.id}`,
-        "DELETE"
+        "DELETE",
+
+        undefined,
+        {
+          Authorization: "Bearer " + token,
+        }
       );
       navigate(`/${userId}/places`);
       props.onPlacesChange(props.id);
@@ -47,7 +52,7 @@ const PlaceItem = (props) => {
     <React.Fragment>
       {isLoading && (
         <div className="center">
-          <LoadingSpinner />
+          <LoadingSpinner asOverlay />
         </div>
       )}
       {error && <ErrorModal error={error} onClear={clearError} />}
@@ -103,11 +108,11 @@ const PlaceItem = (props) => {
                 <Button inverse onClick={openMapHandler}>
                   VIEW ON MAP
                 </Button>
-                {isLoggedIn && props.creatorId === userId && (
+                {isLoggedIn && (
                   <Button to={`/places/update/${props.id}`}>EDIT</Button>
                 )}
 
-                {isLoggedIn && props.creatorId === userId && (
+                {isLoggedIn && (
                   <Button danger onClick={showDeleteWarningHandler}>
                     DELETE
                   </Button>

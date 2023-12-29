@@ -17,7 +17,7 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 const UpdatePlace = () => {
   const placeId = useParams().placeId;
   const [place, setPlace] = useState();
-  const { userId } = useContext(AuthContext);
+  const { userId, token } = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const navigate = useNavigate();
   const [formState, inputHandler, setFormData] = useForm(
@@ -69,7 +69,8 @@ const UpdatePlace = () => {
           title: formState.inputs.title.value,
           description: formState.inputs.description.value,
         }),
-        { "Content-Type": "application/json" }
+
+        { "Content-Type": "application/json", Authorization: "Bearer " + token }
       );
       navigate(`/${userId}/places`);
     } catch (err) {}
@@ -88,7 +89,7 @@ const UpdatePlace = () => {
   if (isLoading) {
     return (
       <div className="center">
-        <LoadingSpinner />
+        <LoadingSpinner asOverlay />
       </div>
     );
   }

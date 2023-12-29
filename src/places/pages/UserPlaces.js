@@ -27,7 +27,7 @@ const UserPlaces = () => {
   return (
     <>
       {isLoading && <LoadingSpinner asOverlay />}
-      {error && <ErrorModal error={error} onClear={clearError} />}
+      {error  && <ErrorModal error={error} onClear={clearError} />}
       {!isLoading && !error && (
         <PlaceList items={places} onPlacesChange={placesChange} />
       )}

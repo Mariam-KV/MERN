@@ -14,12 +14,12 @@ import { useForm } from "../../shared/hooks/form-hook";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
   const auth = useContext(AuthContext);
-  const [isLoginMode, setIsLoginMode] = useState(true);
+  const [isLoginMode, setIsLoginMode] = useState(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -33,6 +33,7 @@ const Auth = () => {
     },
     false
   );
+  const navigate = useNavigate();
 
   const switchModeHandler = () => {
     if (!isLoginMode) {
@@ -65,7 +66,7 @@ const Auth = () => {
 
   const authSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log(formState.inputs);
+
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
@@ -79,7 +80,8 @@ const Auth = () => {
             "Content-Type": "application/json",
           }
         );
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
+        navigate("/");
       } catch (err) {}
     } else {
       try {
@@ -97,7 +99,8 @@ const Auth = () => {
           formData
         );
 
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
+        navigate("/");
       } catch (err) {
         console.log(err);
       }
