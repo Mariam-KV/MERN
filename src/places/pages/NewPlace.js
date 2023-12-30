@@ -50,7 +50,7 @@ const NewPlace = () => {
       formData.append("address", formState.inputs.address.value);
       formData.append("image", formState.inputs.image.value);
       await sendRequest(
-        "http://localhost:5000/api/places",
+        `${process.env.REACT_APP_BACKEND_URL}/places`,
         // behavior for a certain HTTP words.Basically anything but get requests.The browser automatically sends a options request before it sends the actual request you want to send
         "POST",
         formData,

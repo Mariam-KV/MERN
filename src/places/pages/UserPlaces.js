@@ -13,7 +13,7 @@ const UserPlaces = () => {
     async function fPlacesByUserId() {
       try {
         const result = await sendRequest(
-          `http://localhost:5000/api/users/id/${userId}`
+          `${process.env.REACT_APP_BACKEND_URL}/users/id/${userId}`
         );
         setPlaces(result.places);
       } catch (err) {}
@@ -27,7 +27,7 @@ const UserPlaces = () => {
   return (
     <>
       {isLoading && <LoadingSpinner asOverlay />}
-      {error  && <ErrorModal error={error} onClear={clearError} />}
+      {error && <ErrorModal error={error} onClear={clearError} />}
       {!isLoading && !error && (
         <PlaceList items={places} onPlacesChange={placesChange} />
       )}
