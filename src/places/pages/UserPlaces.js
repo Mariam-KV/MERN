@@ -13,7 +13,7 @@ const UserPlaces = () => {
     async function fPlacesByUserId() {
       try {
         const result = await sendRequest(
-          `${process.env.REACT_APP_BACKEND_URL}/users/id/${userId}`
+          `http://localhost:5000/api/places/${userId}/places`
         );
         setPlaces(result.places);
       } catch (err) {}

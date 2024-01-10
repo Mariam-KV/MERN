@@ -9,7 +9,7 @@ import { AuthContext } from "../../shared/context/auth-context";
 const PlaceList = (props) => {
   const { userId } = useContext(AuthContext);
   const currentId = useParams().userId;
-  console.log(userId, currentId);
+ 
   if (props.items.length === 0) {
     return (
       <div className="place-list center">
