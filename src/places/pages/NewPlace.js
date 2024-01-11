@@ -17,7 +17,7 @@ import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 const NewPlace = () => {
   const navigate = useNavigate();
 
-  const { userId, token } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [formState, inputHandler] = useForm(
     {
@@ -66,7 +66,11 @@ const NewPlace = () => {
 
   return (
     <>
-      {isLoading && <LoadingSpinner asOverlay />}
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner asOverlay />
+        </div>
+      )}
       {error && <ErrorModal error={error} onClear={clearError} />}
       {!isLoading && !error && (
         <form className="place-form" onSubmit={placeSubmitHandler}>

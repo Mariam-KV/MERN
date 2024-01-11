@@ -111,7 +111,11 @@ const Auth = () => {
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
       <Card className="authentication">
-        {isLoading && <LoadingSpinner asOverlay />}
+        {isLoading && (
+          <div className="center">
+            <LoadingSpinner asOverlay />
+          </div>
+        )}
         <h2>Login Required</h2>
         <hr />
         <form onSubmit={authSubmitHandler}>
